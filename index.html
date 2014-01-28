@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Taiwan geo data display sample">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>TW Map Proto</title>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+        <script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+        <script src="geo/twTown1982.js"></script>
+        <script src="geo/twCounty2010.js"></script>
+        <script src="js/leaflet-google.js"></script>
+        <style type="text/css">
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: "Helvetica Neue", "HelveticaNeue", Helvetica, sans-serif
+            }
+            #wrapper {
+                margin: 10px auto;
+                padding: 10px;
+                width: 800px;
+                -moz-box-shadow: 0px 0px 3px 3px #cdcdcd;
+                -webkit-box-shadow: 0px 0px 3px 3px #cdcdcd;
+                box-shadow: 0px 0px 3px 3px #cdcdcd;
+            }
+            #content {
+                margin: 5px auto;
+                width: 600px;
+                font-family: 'Palatino Linotype', 'Book Antiqua', 'Palatino', serif;
+            }
+            #map {
+                margin: 0 auto;
+                width: 600px;
+                height: 700px;
+                border: 1px solid #888888;
+            }
+            #more {
+                width: 100%;
+                font-size: 0.8em;
+                font-style: italic;
+                color: #bcbcbc;
+            }
+            #display {
+                font-style: normal;
+                float: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="content">
+                <h2>Taiwan Map Sample</h2>
+                <span>Craft with <a href="http://leafletjs.com/">Leaflet.js</a>.</span>
+                <span>Break ground with <a href="http://www.openstreetmap.org/">OSM</a>.</span>
+                <span>Drill data from 
+                    <a href="http://www.iot.gov.tw/ct.asp?xItem=154948&ctNode=1091">
+                    交通部</a> and 
+                    <a href="https://github.com/g0v/twgeojson">twgeojson</a>.
+                </span></br>
+                <div id="more">
+                    <span id="ps">To open town view, right click on <strong>unselected</strong> county.</span>
+                    <span id="display"></span>
+                </div>
+            </div>
+            <div id="map"></div>
+        </div>
+        <script type="text/javascript">
+
+        var map = new L.map('map');
+        map.setView([23.5, 120], 7);
+
+        // Set background map
+        // https://github.com/leaflet-extras/leaflet-providers/blob/master/leaflet-providers.js
+        //var googleLayer = new L.Google('ROADMAP');
+        //map.addLayer(googleLayer);
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18
+        }).addTo(map);
+
+        var countyLayer;
+        var locId = 1; // Gives each location unique ID
+
+        var countyStyle = function(feature) {
+            return {
+                color: '#b35400',
+                weight: 1.8,
+                opacity: 0.65,
+                fill: true,
+                fillColor: '#FFFFFF',
+            }
+        };
+        var mouseoverEvtCnty = function(e) {
+            e.target.setStyle({
+                fillColor: '#d86d00',
+            });
+        }
+        var mouseoutEvtCnty = function(e) {
+            e.target.setStyle({
+                fillColor: '#FFFFFF',
+            });
+        }
+        var clickEvtCnty = function(e) {
+            var thisLayer = e.target;
+            var clicked = !(thisLayer.selected || false);
+            thisLayer.selected = clicked;
+
+            if (clicked) {
+                thisLayer.setStyle({
+                    fillColor: '#d86d00',
+                    fillOpacity: 0.4,
+                });
+                thisLayer.off('mouseout mouseover contextmenu');
+
+                var thisName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = thisName + ' ';
+            }
+            else {
+                var thisName = thisLayer.feature.properties.name;
+                thisLayer.setStyle({
+                    fillColor: '#FFFFFF',
+                    fillOpacity: 0.2,
+                });
+                thisLayer.on({
+                    mouseover: mouseoverEvtCnty,
+                    mouseout: mouseoutEvtCnty,
+                    contextmenu: rclickEvtCnty,
+                });
+
+                document.getElementById('display').innerHTML = '';
+            }
+        };
+        var rclickEvtCnty = function(e) {
+            var thisLayer = e.target;
+            thisLayer.townLayer = addTownLayer(thisLayer, thisLayer.feature.properties.name);
+        }
+
+        var mouseoverEvtTown = function(e) {
+            e.target.setStyle({
+                fillOpacity: 0.4,
+            });
+        }
+        var mouseoutEvtTown = function(e) {
+            e.target.setStyle({
+                fillOpacity: 0.1,
+            });
+        }
+        var clickEvtTown = function(e) {
+            var thisLayer = e.target;
+            var clicked = !(thisLayer.selected || false);
+            thisLayer.selected = clicked;
+
+            if (clicked) {
+                thisLayer.setStyle({
+                    fillOpacity: 0.4,
+                });
+                thisLayer.off('mouseout mouseover');
+
+                var thisName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = thisName + ' ';
+            }
+            else {
+                var thisName = thisLayer.feature.properties.name;
+                thisLayer.setStyle({
+                    fillOpacity: 0.1,
+                });
+                thisLayer.on({
+                    mouseover: mouseoverEvtTown,
+                    mouseout: mouseoutEvtTown,
+                });
+                document.getElementById('display').innerHTML = '';
+            }
+        }
+
+        var cntyEvtListeners = function(feature, layer) {
+            layer.on({
+                mouseover: mouseoverEvtCnty,
+                mouseout: mouseoutEvtCnty,
+                click: clickEvtCnty,
+                contextmenu: rclickEvtCnty,
+            })
+            layer._leaflet_id = 'id' + feature.properties.name;
+        }
+
+        countyLayer = L.geoJson(COUNTY, {
+            style: countyStyle,
+            onEachFeature: cntyEvtListeners,
+        });
+
+        countyLayer.addTo(map);
+
+
+        function addTownLayer(countyLayer, countyName) {
+            var townLayer;
+            var townStyle = function(feature) {
+                if (countyName === feature.properties.COUNTYNAME) {
+                    return {
+                        color: '#ff8d00',
+                        opacity: 0.5,
+                        weight: 1,
+                        fillOpacity: 0.1,
+                        fillColor: '#fff000',
+                    }
+                } else {
+                    return {
+                        stroke: false,
+                        fill: false,
+                    }
+                }
+            }
+            var townEvtListeners = function(feature, layer) {
+                if (countyName === feature.properties.COUNTYNAME) {
+                    layer.on({
+                        mouseover: mouseoverEvtTown,
+                        mouseout: mouseoutEvtTown,
+                        click: clickEvtTown,
+                        contextmenu: function() {
+                            map.removeLayer(townLayer);
+                            delete countyLayer.townLayer;
+                        },
+                    });
+                    layer._leaflet_id = 'id' + feature.properties.name;
+                }
+            }
+
+            var townLayer = L.geoJson(TOWN, {
+                style: townStyle,
+                onEachFeature: townEvtListeners,
+            });
+
+            townLayer.addTo(map);
+            return townLayer;
+        }
+
+        function removeTownLayer(countyLayer) {
+            map.removeLayer(countyLayer.townLayer);
+        }
+        </script>
+    </body>
+</html>
