@@ -4,8 +4,14 @@
         <meta charset="utf-8">
         <meta name="description" content="Taiwan geo data display sample">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <title>TW Map Proto</title>
+        <link rel="stylesheet" href="stylesheets/styles.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
         <script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
@@ -34,7 +40,7 @@
             #map {
                 margin: 0 auto;
                 width: 600px;
-                height: 700px;
+                height: 600px;
                 border: 1px solid #888888;
             }
             #more {
@@ -47,7 +53,26 @@
                 font-style: normal;
                 float: right;
             }
+            header {
+                margin: 10px auto;
+                position: static;
+                float: none;
+            }
+            header p {
+                margin: 5px auto;
+                text-align: center;
+            }
         </style>
+        <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try {
+                var pageTracker = _gat._getTracker("UA-47564340-1");
+                pageTracker._trackPageview();
+            } catch(err) {}
+        </script>
     </head>
     <body>
         <div id="wrapper">
@@ -66,6 +91,15 @@
                 </div>
             </div>
             <div id="map"></div>
+            <header>
+                <ul>
+                    <li><a href="https://github.com/erichoco/twmap/zipball/master">Download <strong>ZIP File</strong></a></li>
+                    <li><a href="https://github.com/erichoco/twmap/tarball/master">Download <strong>TAR Ball</strong></a></li>
+                    <li><a href="https://github.com/erichoco/twmap">View On <strong>GitHub</strong></a></li>
+                </ul>
+                <p>This project is maintained by <a href="https://github.com/erichoco">erichoco</a></p>
+                <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+            </header>
         </div>
         <script type="text/javascript">
 
