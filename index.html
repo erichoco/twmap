@@ -263,6 +263,7 @@
                         contextmenu: function() {
                             map.removeLayer(townLayer);
                             delete countyLayer.townLayer;
+                            document.getElementById('display').innerHTML = '';
                         },
                     });
                     layer._leaflet_id = 'id' + feature.properties.name;
