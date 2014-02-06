@@ -82,6 +82,7 @@
 
         var countyLayer;
         var locId = 1; // Gives each location unique ID
+        var selectedName = '';
 
         var countyStyle = function(feature) {
             return {
@@ -96,11 +97,13 @@
             e.target.setStyle({
                 fillColor: '#d86d00',
             });
+            document.getElementById('display').innerHTML = e.target.feature.properties.name + ' ';
         }
         var mouseoutEvtCnty = function(e) {
             e.target.setStyle({
                 fillColor: '#FFFFFF',
             });
+            document.getElementById('display').innerHTML = selectedName + ' ';
         }
         var clickEvtCnty = function(e) {
             var thisLayer = e.target;
@@ -114,8 +117,8 @@
                 });
                 thisLayer.off('mouseout mouseover contextmenu');
 
-                var thisName = thisLayer.feature.properties.name;
-                document.getElementById('display').innerHTML = thisName + ' ';
+                selectedName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = selectedName + ' ';
             }
             else {
                 var thisName = thisLayer.feature.properties.name;
@@ -128,7 +131,7 @@
                     mouseout: mouseoutEvtCnty,
                     contextmenu: rclickEvtCnty,
                 });
-
+                selectedName = '';
                 document.getElementById('display').innerHTML = '';
             }
         };
@@ -141,11 +144,13 @@
             e.target.setStyle({
                 fillOpacity: 0.4,
             });
+            document.getElementById('display').innerHTML = e.target.feature.properties.name + ' ';
         }
         var mouseoutEvtTown = function(e) {
             e.target.setStyle({
                 fillOpacity: 0.1,
             });
+            document.getElementById('display').innerHTML = selectedName + ' ';
         }
         var clickEvtTown = function(e) {
             var thisLayer = e.target;
@@ -158,8 +163,8 @@
                 });
                 thisLayer.off('mouseout mouseover');
 
-                var thisName = thisLayer.feature.properties.name;
-                document.getElementById('display').innerHTML = thisName + ' ';
+                selectedName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = selectedName + ' ';
             }
             else {
                 var thisName = thisLayer.feature.properties.name;
@@ -170,6 +175,7 @@
                     mouseover: mouseoverEvtTown,
                     mouseout: mouseoutEvtTown,
                 });
+                selectedName = '';
                 document.getElementById('display').innerHTML = '';
             }
         }
