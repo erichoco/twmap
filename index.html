@@ -5,7 +5,7 @@
         <meta name="description" content="Taiwan geo data display sample">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
-        <title>TW Map Proto</title>
+        <title>TW Map Sample</title>
         <link rel="stylesheet" href="stylesheets/styles.css">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
@@ -47,7 +47,7 @@
                 width: 100%;
                 font-size: 0.8em;
                 font-style: italic;
-                color: #bcbcbc;
+                color: #969696;
             }
             #display {
                 font-style: normal;
@@ -112,7 +112,6 @@
             </header>
         </div>
         <script type="text/javascript">
-
         var map = new L.map('map');
         map.setView([23.5, 120], 7);
 
@@ -126,6 +125,7 @@
 
         var countyLayer;
         var locId = 1; // Gives each location unique ID
+        var selectedName = '';
 
         var countyStyle = function(feature) {
             return {
@@ -140,11 +140,13 @@
             e.target.setStyle({
                 fillColor: '#d86d00',
             });
+            document.getElementById('display').innerHTML = e.target.feature.properties.name + ' ';
         }
         var mouseoutEvtCnty = function(e) {
             e.target.setStyle({
                 fillColor: '#FFFFFF',
             });
+            document.getElementById('display').innerHTML = selectedName + ' ';
         }
         var clickEvtCnty = function(e) {
             var thisLayer = e.target;
@@ -158,8 +160,8 @@
                 });
                 thisLayer.off('mouseout mouseover contextmenu');
 
-                var thisName = thisLayer.feature.properties.name;
-                document.getElementById('display').innerHTML = thisName + ' ';
+                selectedName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = selectedName + ' ';
             }
             else {
                 var thisName = thisLayer.feature.properties.name;
@@ -172,7 +174,7 @@
                     mouseout: mouseoutEvtCnty,
                     contextmenu: rclickEvtCnty,
                 });
-
+                selectedName = '';
                 document.getElementById('display').innerHTML = '';
             }
         };
@@ -185,11 +187,13 @@
             e.target.setStyle({
                 fillOpacity: 0.4,
             });
+            document.getElementById('display').innerHTML = e.target.feature.properties.name + ' ';
         }
         var mouseoutEvtTown = function(e) {
             e.target.setStyle({
                 fillOpacity: 0.1,
             });
+            document.getElementById('display').innerHTML = selectedName + ' ';
         }
         var clickEvtTown = function(e) {
             var thisLayer = e.target;
@@ -202,8 +206,8 @@
                 });
                 thisLayer.off('mouseout mouseover');
 
-                var thisName = thisLayer.feature.properties.name;
-                document.getElementById('display').innerHTML = thisName + ' ';
+                selectedName = thisLayer.feature.properties.name;
+                document.getElementById('display').innerHTML = selectedName + ' ';
             }
             else {
                 var thisName = thisLayer.feature.properties.name;
@@ -214,6 +218,7 @@
                     mouseover: mouseoverEvtTown,
                     mouseout: mouseoutEvtTown,
                 });
+                selectedName = '';
                 document.getElementById('display').innerHTML = '';
             }
         }
